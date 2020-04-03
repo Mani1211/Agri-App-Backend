@@ -201,14 +201,14 @@ app.post("/sugarincomedetails/add", (req, res) => {
   income
     .save()
     .then(income => {
-      res.status(200).json({ income: "Added Successfully" });
+      res.status(200).json({ income: "Added Successfully" }).send(income);
     })
     .catch(err => {
       res.status(400).send("Failed to create");
     });
 });
 
-app.post("/sugarincomeupdate/:id", async (req, res) => {
+app.post("/sugarincomeupdate/:id", async (req, res) => {   
   console.log(req.body, req.params.id);
   let income = await SugarIncome.findByIdAndUpdate(
     req.params.id,
@@ -218,7 +218,7 @@ app.post("/sugarincomeupdate/:id", async (req, res) => {
       customerName: req.body.customerName,
       advance: req.body.advance,
       balance: req.body.balance,
-vehicleNumber:req.body.vehicleNumber,
+      vehicleNumber:req.body.vehicleNumber,
       amountGiven: req.body.amountGiven,
       ryotNumber: req.body.ryotNumber,
       plotNumber: req.body.plotNumber,
