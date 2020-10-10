@@ -28,7 +28,7 @@ const app = express();
 
 const corsObj = {
   orgin: "http://localost:4200",
-  optionSuccessStatus: 200
+  optionSuccessStatus: 200,
 };
 
 app.use(cors(corsObj));
@@ -46,12 +46,12 @@ mongoose
   .connect(cloudDbUri, {
     useNewUrlParser: true,
     useFindAndModify: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
   .then(() => {
     console.log("Mongodb connected");
   })
-  .catch(err => console.log(err));
+  .catch((err) => console.log(err));
 //  mongoose.connect(localDbUri, { useNewUrlParser: true })
 
 // const connection=mongoose.connection;
@@ -75,15 +75,28 @@ app.get("/riceincomedetails/:id", (req, res) => {
   });
 });
 
+app.get("/riceincomedetails/user/:userid", async (req, res) => {
+  console.log(req.params);
+  const riceincome = await RiceIncome.find({ userId: req.params.userid });
+  console.log(riceincome, "po");
+  res.send(riceincome);
+});
+
+// router.get("/tour/cityname/:name", async (req, res) => {
+//   console.log(req.params);
+//   const tour = await TourIdea.find({ cityName: req.params.name });
+//   res.send(tour);
+// });
+
 app.post("/riceincomedetails/add", (req, res) => {
   console.log(req.body);
   let income = new RiceIncome(req.body);
   income
     .save()
-    .then(income => {
+    .then((income) => {
       res.status(200).json({ income: "Added Successfully" });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(400).send(err);
     });
 });
@@ -102,14 +115,15 @@ app.post("/riceincomeupdate/:id", async (req, res) => {
       totalAmount: req.body.totalAmount,
       advance: req.body.advance,
       balance: req.body.balance,
-      amountGiven: req.body.amountGiven
+      amountGiven: req.body.amountGiven,
+      userId: req.body.userId,
     },
     { new: true }
   );
   income
     .save()
-    .then(res => res.send(income, "updated"))
-    .catch(err => res.send(err));
+    .then((res) => res.send(income, "updated"))
+    .catch((err) => res.send(err));
 });
 
 app.get("/riceincomedetails/delete/:id", (req, res) => {
@@ -132,16 +146,22 @@ app.get("/riceexpensedetails/:id", (req, res) => {
     else res.json(expense);
   });
 });
+app.get("/riceexpensedetails/user/:userid", async (req, res) => {
+  console.log(req.params);
+  const riceexpense = await RiceExpense.find({ userId: req.params.userid });
+  console.log(riceexpense);
+  res.send(riceexpense);
+});
 
 app.post("/riceexpensedetails/add", (req, res) => {
   console.log(req.body);
   let expense = new RiceExpense(req.body);
   expense
     .save()
-    .then(expense => {
+    .then((expense) => {
       res.status(200).json({ expense: "Added Successfully" });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(400).send("Failed to create");
     });
 });
@@ -161,14 +181,15 @@ app.post("/riceexpenseupdate/:id", async (req, res) => {
       driverSalary: req.body.driverSalary,
       managerSalary: req.body.managerSalary,
       foodCost: req.body.foodCost,
-      totalAmount: req.body.totalAmount
+      totalAmount: req.body.totalAmount,
+      userId: req.body.userId,
     },
     { new: true }
   );
   await expense
     .save()
-    .then(expense => res.status(200).send(expense))
-    .catch(err => res.status(400).send(err));
+    .then((expense) => res.status(200).send(expense))
+    .catch((err) => res.status(400).send(err));
 });
 
 app.get("/riceexpensedetails/delete/:id", (req, res) => {
@@ -195,20 +216,27 @@ app.get("/sugarincomedetails/:id", (req, res) => {
   });
 });
 
+app.get("/sugarincomedetails/user/:userid", async (req, res) => {
+  console.log(req.params);
+  const sugarincome = await SugarIncome.find({ userId: req.params.userid });
+  console.log(sugarincome);
+  res.send(sugarincome);
+});
+
 app.post("/sugarincomedetails/add", (req, res) => {
   console.log(req.body);
   let income = new SugarIncome(req.body);
   income
     .save()
-    .then(income => {
+    .then((income) => {
       res.status(200).json({ income: "Added Successfully" }).send(income);
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(400).send("Failed to create");
     });
 });
 
-app.post("/sugarincomeupdate/:id", async (req, res) => {   
+app.post("/sugarincomeupdate/:id", async (req, res) => {
   console.log(req.body, req.params.id);
   let income = await SugarIncome.findByIdAndUpdate(
     req.params.id,
@@ -218,20 +246,21 @@ app.post("/sugarincomeupdate/:id", async (req, res) => {
       customerName: req.body.customerName,
       advance: req.body.advance,
       balance: req.body.balance,
-      vehicleNumber:req.body.vehicleNumber,
+      vehicleNumber: req.body.vehicleNumber,
       amountGiven: req.body.amountGiven,
       ryotNumber: req.body.ryotNumber,
       plotNumber: req.body.plotNumber,
       costPerTon: req.body.costPerTon,
       totalTons: req.body.totalTons,
-      amount: req.body.amount
+      amount: req.body.amount,
+      userId: req.body.userId,
     },
     { new: true }
   );
   await income
     .save()
-    .then(income => res.status(200).send(income))
-    .catch(err => res.status(400).send(err));
+    .then((income) => res.status(200).send(income))
+    .catch((err) => res.status(400).send(err));
 });
 
 app.get("/sugarincomedetails/delete/:id", (req, res) => {
@@ -255,15 +284,22 @@ app.get("/sugarexpensedetails/:id", (req, res) => {
   });
 });
 
+app.get("/sugarexpensedetails/user/:userid", async (req, res) => {
+  console.log(req.params);
+  const sugarexpense = await SugarExpense.find({ userId: req.params.userid });
+  console.log(sugarexpense, "pl");
+  res.send(sugarexpense);
+});
+
 app.post("/sugarexpensedetails/add", (req, res) => {
   console.log(req.body);
   let expense = new SugarExpense(req.body);
   expense
     .save()
-    .then(expense => {
+    .then((expense) => {
       res.status(200).json({ expense: "Added Successfully" });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(400).send("Failed to create");
     });
 });
@@ -283,14 +319,15 @@ app.post("/sugarexpenseupdate/:id", async (req, res) => {
       driverSalary: req.body.driverSalary,
       managerSalary: req.body.managerSalary,
       foodCost: req.body.foodCost,
-      totalAmount: req.body.totalAmount
+      totalAmount: req.body.totalAmount,
+      userId: req.body.userId,
     },
     { new: true }
   );
   await expense
     .save()
-    .then(expense => res.status(200).send(expense))
-    .catch(err => res.status(400).send(err));
+    .then((expense) => res.status(200).send(expense))
+    .catch((err) => res.status(400).send(err));
 });
 
 app.get("/sugarexpensedetails/delete/:id", (req, res) => {
@@ -319,15 +356,24 @@ app.get("/balerrentincomedetails/:id", (req, res) => {
   });
 });
 
+app.get("/balerrentincomedetails/user/:userid", async (req, res) => {
+  console.log(req.params);
+  const balerRentIncome = await BalerRentIncome.find({
+    userId: req.params.userid,
+  });
+  console.log(balerRentIncome), "po";
+  res.send(balerRentIncome);
+});
+
 app.post("/balerrentincomedetails/add", (req, res) => {
   console.log(req.body);
   let income = new BalerRentIncome(req.body);
   income
     .save()
-    .then(income => {
+    .then((income) => {
       res.status(200).json({ income: "Added Successfully" });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(400).send(err);
     });
 });
@@ -346,14 +392,15 @@ app.post("/balerrentincomeupdate/:id", async (req, res) => {
       totalAmount: req.body.totalAmount,
       advance: req.body.advance,
       balance: req.body.balance,
-      amountGiven: req.body.amountGiven
+      amountGiven: req.body.amountGiven,
+      userId: req.body.userId,
     },
     { new: true }
   );
   income
     .save()
-    .then(res => res.send(income, "updated"))
-    .catch(err => res.send(err));
+    .then((res) => res.send(income, "updated"))
+    .catch((err) => res.send(err));
 });
 
 app.get("/balerrentincomedetails/delete/:id", (req, res) => {
@@ -380,15 +427,24 @@ app.get("/balersellincomedetails/:id", (req, res) => {
   });
 });
 
+app.get("/balersellincomedetails/user/:userid", async (req, res) => {
+  console.log(req.params);
+  const balerSellIncome = await BalerSellIncome.find({
+    userId: req.params.userid,
+  });
+  console.log(balerSellIncome), "po";
+  res.send(balerSellIncome);
+});
+
 app.post("/balersellincomedetails/add", (req, res) => {
   console.log(req.body);
   let income = new BalerSellIncome(req.body);
   income
     .save()
-    .then(income => {
+    .then((income) => {
       res.status(200).json({ income: "Added Successfully" });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(400).send(err);
     });
 });
@@ -407,14 +463,15 @@ app.post("/balersellincomeupdate/:id", async (req, res) => {
       totalAmount: req.body.totalAmount,
       advance: req.body.advance,
       balance: req.body.balance,
-      amountGiven: req.body.amountGiven
+      amountGiven: req.body.amountGiven,
+      userId: req.body.userId,
     },
     { new: true }
   );
   income
     .save()
-    .then(res => res.send(income, "updated"))
-    .catch(err => res.send(err));
+    .then((res) => res.send(income, "updated"))
+    .catch((err) => res.send(err));
 });
 
 app.get("/balersellincomedetails/delete/:id", (req, res) => {
@@ -439,15 +496,24 @@ app.get("/balerexpensedetails/:id", (req, res) => {
   });
 });
 
+app.get("/balerexpensedetails/user/:userid", async (req, res) => {
+  console.log(req.params);
+  const balerExpense = await BalerExpense.find({
+    userId: req.params.userid,
+  });
+  console.log(balerExpense), "po";
+  res.send(balerExpense);
+});
+
 app.post("/balerexpensedetails/add", (req, res) => {
   console.log(req.body);
   let expense = new BalerExpense(req.body);
   expense
     .save()
-    .then(expense => {
+    .then((expense) => {
       res.status(200).json({ expense: "Added Successfully" });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(400).send("Failed to create");
     });
 });
@@ -470,14 +536,15 @@ app.post("/balerexpenseupdate/:id", async (req, res) => {
       hayCost: req.body.hayCost,
       juteCost: req.body.juteCost,
       foodCost: req.body.foodCost,
-      totalAmount: req.body.totalAmount
+      totalAmount: req.body.totalAmount,
+      userId: req.body.userId,
     },
     { new: true }
   );
   await expense
     .save()
-    .then(expense => res.status(200).send(expense))
-    .catch(err => res.status(400).send(err));
+    .then((expense) => res.status(200).send(expense))
+    .catch((err) => res.status(400).send(err));
 });
 
 app.get("/balerexpensedetails/delete/:id", (req, res) => {
@@ -488,4 +555,3 @@ app.get("/balerexpensedetails/delete/:id", (req, res) => {
 });
 
 app.listen(process.env.PORT || 3000, () => console.log("Running on 3000"));
-

@@ -3,43 +3,46 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 let SugarIncome = new Schema({
+  userId: {
+    type: String,
+  },
   date: {
-    type: String
+    type: String,
   },
   customerName: {
-    type: String
+    type: String,
   },
   customerPlace: {
-    type: String
+    type: String,
   },
 
   vehicleNumber: {
-    type: String
+    type: String,
   },
   ryotNumber: {
-    type: Number
+    type: Number,
   },
   plotNumber: {
-    type: Number
+    type: Number,
   },
   costPerTon: {
-    type: Number
+    type: Number,
   },
   totalTons: {
-    type: Number
+    type: Number,
   },
   amount: {
-    type: Number
+    type: Number,
   },
   advance: {
-    type: Number
+    type: Number,
   },
   balance: {
-    type: Number
+    type: Number,
   },
   amountGiven: {
-    type: Number
-  }
+    type: Number,
+  },
 });
 
 module.exports = mongoose.model("SugarIncome", SugarIncome);
